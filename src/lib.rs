@@ -13,3 +13,5 @@ pub mod radios;
 
 pub mod modulation;
 mod vhdl;
+
+pub mod gain_control;
