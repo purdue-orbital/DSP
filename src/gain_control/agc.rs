@@ -6,13 +6,7 @@ use num::Complex;
 /// 
 /// # Examples
 ///
-/// ```
-/// let target: f32 = 1.0 // target amplitude of the output signal
-/// let step_size: usize = 0.01 // step size of the agc algorithm
-/// 
-/// let mut agc: AGC<1024> = AGC::new(target, step_size);
-/// let output = agc.run(&sample_block);
-/// ```
+/// TODO
 pub struct AGC<const BLOCK_SIZE: usize> {
     gain: f32,
     target: f32,
