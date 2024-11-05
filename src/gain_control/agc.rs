@@ -1,4 +1,5 @@
 use num::Complex;
+use libm::sqrtf;
 
 /// # Automatic Gain Controller
 /// automatic gain control using basic algorithm found here:
@@ -48,7 +49,8 @@ impl<const BLOCK_SIZE: usize> AGC<BLOCK_SIZE> {
             for n in 0..BLOCK_SIZE {
                 output_signal[n] = samples[n].scale(self.gain);
                 
-                let error = self.target - self.gain * samples[n].norm(); // can use approximation |z[n]| = sqrt(z_i^2 + z_q^2) approx. = |z_i| + |z_q|
+                let norm = sqrtf(samples[n].re * samples[n].re + samples[n].im * samples[n].im); // can use approximation |z[n]| = sqrt(z_i^2 + z_q^2) approx. = |z_i| + |z_q|
+                let error = self.target - self.gain * norm; 
                 self.gain += error * self.step_size;
             }
         }
