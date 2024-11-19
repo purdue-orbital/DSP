@@ -1,10 +1,10 @@
 use std::time::SystemTime;
-use superdsp::radios::viterbi38::{self, viterbi_decode, viterbi_encode};
+use superdsp::ecc::viterbi35::{self, viterbi_decode, viterbi_encode};
 
 
 #[test]
 pub fn encode_decode() {
-    let viterbi = viterbi38::viterbi_encode::<16, 18, 54>([75, 0x01, 0x21, 0x23, 0x43, 0x45, 0x65, 0x67, 0x87, 0x89, 0xA9, 0xAB, 0xCB, 0xCD, 0xED, 0xEF]);
+    let viterbi = viterbi35::viterbi_encode::<16, 18, 54>([75, 0x01, 0x21, 0x23, 0x43, 0x45, 0x65, 0x67, 0x87, 0x89, 0xA9, 0xAB, 0xCB, 0xCD, 0xED, 0xEF]);
     print!("Encoded bytes: ");
     for byte in viterbi{
         /*for i in 0..=7{
@@ -46,7 +46,7 @@ pub fn encode_decode() {
 #[test]
 pub fn small_bytes(){
     let small_byte_array = [0x0, 0b01010101, 0xFF];
-    let encoded_array = viterbi38::viterbi_encode::<3, 5, 15>(small_byte_array);
+    let encoded_array = viterbi35::viterbi_encode::<3, 5, 15>(small_byte_array);
     let mut corrupted_encoded = encoded_array;
     for i in 0..=14{
         if i%2 == 0{corrupted_encoded[i] = encoded_array[i] ^ (0x01 << (i%8));} //Flip "random" (not really) bits.
@@ -87,10 +87,10 @@ pub fn every_byte() {
     for i in 0..=255{
         bytes_array[i] = i as u8;
     }
-    let encoded_array = viterbi38::viterbi_encode::<256, 258, 774>(bytes_array);
+    let encoded_array = viterbi35::viterbi_encode::<256, 258, 774>(bytes_array);
     let mut corrupted_encoded = encoded_array;
     for i in 0..=773{
-        corrupted_encoded[i] = encoded_array[i] ^ (0x01 << (i%8)); //Flip "random" (not really) bits.
+        corrupted_encoded[i] = encoded_array[i] ^ (0x40 << (i%8)); //Flip "random" (not really) bits.
         let that_num = corrupted_encoded[i];
         let this_num = encoded_array[i];
         println!("{this_num}, {that_num}");
@@ -128,17 +128,31 @@ pub fn speed_test() {
         big_i += 1;
     }
     big_i = 0;
-    let start = SystemTime::now();
+    let mut start = SystemTime::now();
     while big_i < (great/10_i32.pow(3)){
         let encoded = viterbi_encode::<1000, 1002, 3006>(array);
         let _decoded = viterbi_decode::<3006, 1000>(encoded);
         big_i += 1;
     }
+    big_i = 0;
+    let mut total_time = 0;
     match SystemTime::now().duration_since(start) {
-        Ok(n) => {println!("Process began {} milliseconds ago!", n.as_millis());
-                            let time = n.as_nanos()/great as u128;
-                            println!("Time per instruction is {time} nanoseconds.")},
+        Ok(n) => {total_time = n.as_nanos()/great as u128;},
         Err(_) => panic!("System traveled back in time!"),
     }
+    start = SystemTime::now();
+    while big_i < (great/10_i32.pow(3)){
+        let _encoded = viterbi_encode::<1000, 1002, 3006>(array);
+        big_i += 1;
+    }
+    let mut encoding_time = 0;
+    match SystemTime::now().duration_since(start) {
+        Ok(n) => {encoding_time = n.as_nanos()/great as u128;},
+        Err(_) => panic!("System traveled back in time!"),
+    }
+    let decoding_time = total_time-encoding_time;
+    println!("encoding time per byte ...  {encoding_time} nanoseconds");
+    println!("decoding time per byte ...  {decoding_time} nanoseconds");
+    println!("total time per byte ...  {total_time} nanoseconds");
 }
 

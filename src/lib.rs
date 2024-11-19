@@ -10,6 +10,7 @@ pub mod filters_and_windows;
 #[cfg(feature = "gui")]
 pub mod gui;
 pub mod radios;
+pub mod ecc;
 
 pub mod modulation;
 mod vhdl;

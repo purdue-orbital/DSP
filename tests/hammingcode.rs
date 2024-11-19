@@ -1,6 +1,6 @@
 // Test Triangle Window
 use std::time::SystemTime;
-use superdsp::radios::hamming84::{self, hamming_decode};
+use superdsp::ecc::hamming84::{self, hamming_decode};
 
 
 #[test]
