@@ -13,6 +13,8 @@ use crate::objects::object::DSPObject;
 
 pub mod object;
 pub mod wave_gen;
+pub mod viterbi_encode;
+pub mod viterbi_decode;
 
 #[cfg(feature = "std")]
 pub mod wave_gen_time;
