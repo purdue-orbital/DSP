@@ -1,11 +1,8 @@
 #![no_std]
 
-#[cfg(feature = "std")]
-extern crate std;
-
 pub mod math;
-pub mod objects;
+pub mod pipeline;
+pub mod stages;
 
-#[cfg(feature = "gui")]
-pub mod gui;
-pub mod radios;
+use core::ops::{Add, AddAssign, Mul};
+
