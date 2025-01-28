@@ -8,9 +8,11 @@ edition = "2021"
 
 [dependencies]
 cordic = "0.1.5"
+num = "0.4.3"
 num-complex = "0.4.6"
-rayon = "1.10.0"
 fixed = "1.28.0"
+anyhow = "1.0.95"
+tokio = { version = "1.43.0", features = ["sync"] }
 
 [dev-dependencies]
 criterion = { version = "0.5" }
